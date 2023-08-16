@@ -1,6 +1,7 @@
 import Head from "next/head";
 
 export default function Home({ data }) {
+	console.log(data);
 	return (
 		<>
 			<Head>
@@ -16,34 +17,25 @@ export default function Home({ data }) {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main>
-				<table>
-					<thead>
-						<tr>
-							<td> Name </td>
-							<td> User name </td>
-							<td> Email </td>
-							<td> Phone </td>
-							<td> Website </td>
-						</tr>
-					</thead>
-					<tbody>
-						{data.map((item) => (
-							<tr key={item.id}>
-								<td> {item.name} </td>
-								<td> {item.username} </td>
-								<td>{item.email} </td>
-								<td> {item.phone}</td>
-								<td> {item.website} </td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+				<h1>City: {data.name}</h1>
+				<h2>Temp: {data.main.temp}</h2>
+				<p>Weather: {data.weather[0].description}</p>
 			</main>
 		</>
 	);
 }
 export async function getStaticProps() {
-	const res = await fetch("https://jsonplaceholder.typicode.com/users");
+	const defaultApiConfig = {
+		lat: 21.0245,
+		lon: 105.8412,
+		units: "metric",
+		lang: "en",
+		apiKey: "ee28afe45d0af688efc6e90041910bc3",
+	};
+	const createWetherRequest = (apiConfig) =>
+		`https://api.openweathermap.org/data/2.5/weather?lat=${apiConfig.lat}&lon=${apiConfig.lon}&units=${apiConfig.units}&lang=${apiConfig.lang}&appid=${apiConfig.apiKey}`;
+
+	const res = await fetch(createWetherRequest(defaultApiConfig));
 	const json = await res.json();
 	return {
 		props: { data: json },
